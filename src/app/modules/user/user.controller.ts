@@ -40,6 +40,7 @@ const getUsers = async (req: Request, res: Response) => {
     });
   }
 };
+
 const getSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -69,6 +70,7 @@ const getSingleUser = async (req: Request, res: Response) => {
     }
   }
 };
+
 const updateUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
