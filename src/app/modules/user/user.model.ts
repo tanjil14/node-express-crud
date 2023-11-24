@@ -108,31 +108,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.pre('aggregate', function (next) {
-  const pipeline = this.pipeline();
-  const projectStage = {
-    $project: {
-      username: 1,
-      fullName: {
-        firstName: '$fullName.firstName',
-        lastName: '$fullName.lastName',
-      },
-      age: 1,
-      email: 1,
-      address: {
-        street: '$address.street',
-        city: '$address.city',
-        country: '$address.country',
-      },
-      _id: 0,
-    },
-  };
-
-  pipeline.push(projectStage);
-
-  next();
-});
-
 userSchema.set('toJSON', {
   transform: function (doc, ret) {
     delete ret.password;

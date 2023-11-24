@@ -10,7 +10,25 @@ const createUserIntoDB = async (userData: TUser) => {
 };
 
 const getUsersFromDB = async () => {
-  const result = await User.aggregate();
+  const result = await User.aggregate([
+    {
+      $project: {
+        username: 1,
+        fullName: {
+          firstName: '$fullName.firstName',
+          lastName: '$fullName.lastName',
+        },
+        age: 1,
+        email: 1,
+        address: {
+          street: '$address.street',
+          city: '$address.city',
+          country: '$address.country',
+        },
+        _id: 0,
+      },
+    },
+  ]);
   return result;
 };
 
@@ -76,10 +94,39 @@ const getUserOrders = async (userId: number) => {
     error.name = 'NotFoundError';
     throw error;
   }
-
   return existingUser.orders;
 };
 
+const getOrderPrice = async (userId: number) => {
+  const existingUser = await User.isUserExists(userId);
+  if (!existingUser) {
+    const error = new Error('User not found');
+    error.name = 'NotFoundError';
+    throw error;
+  }
+  const aggregationResult = await User.aggregate([
+    { $match: { userId: userId } },
+
+    {
+      $unwind: '$orders',
+    },
+    {
+      $group: {
+        _id: null,
+        totalPrice: {
+          $sum: { $multiply: ['$orders.price', '$orders.quantity'] },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+      },
+    },
+  ]);
+
+  return aggregationResult.length > 0 ? aggregationResult[0] : 0;
+};
 export const UserService = {
   createUserIntoDB,
   getUsersFromDB,
@@ -88,4 +135,5 @@ export const UserService = {
   deleteUserFromDB,
   AddNewProductToUser,
   getUserOrders,
+  getOrderPrice,
 };
