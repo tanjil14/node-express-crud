@@ -164,4 +164,5 @@ export const UserControllers = {
   updateUser,
   deleteUser,
   addNewProduct,
+  getOrders,
 };

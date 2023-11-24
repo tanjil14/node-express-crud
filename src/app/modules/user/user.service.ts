@@ -67,6 +67,7 @@ const AddNewProductToUser = async (orderData: TOrderItem, userId: number) => {
     new: true,
   });
 
+  console.log(result);
   return result;
 };
 
