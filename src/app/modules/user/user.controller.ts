@@ -137,10 +137,34 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
+const addNewProduct = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const result = await UserService.AddNewProductToUser(
+      req.body,
+      Number(userId),
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Student is deleted succesfully',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'something went wrong',
+      error: err,
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getUsers,
   getSingleUser,
   updateUser,
   deleteUser,
+  addNewProduct,
 };
