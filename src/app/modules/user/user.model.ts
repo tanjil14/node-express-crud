@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import bcrypt from 'bcrypt';
 import {
   TOrderItem,
   TUser,
@@ -6,6 +7,7 @@ import {
   TUserFullName,
   UserModel,
 } from './user.interface';
+import config from '../../config';
 
 const userNameSchema = new Schema<TUserFullName>({
   firstName: {
@@ -91,6 +93,57 @@ const userSchema = new Schema<TUser, UserModel>({
   orders: {
     type: [orderItemSchema],
     default: [],
+  },
+});
+
+//pre save middleware hook
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  //hasing password and save into DB
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+userSchema.pre('aggregate', function (next) {
+  const pipeline = this.pipeline();
+  const projectStage = {
+    $project: {
+      username: 1,
+      fullName: {
+        firstName: '$fullName.firstName',
+        lastName: '$fullName.lastName',
+      },
+      age: 1,
+      email: 1,
+      address: {
+        street: '$address.street',
+        city: '$address.city',
+        country: '$address.country',
+      },
+      _id: 0,
+    },
+  };
+
+  pipeline.push(projectStage);
+
+  next();
+});
+
+userSchema.set('toJSON', {
+  transform: function (doc, ret) {
+    delete ret.password;
+    delete ret.orders;
+    if (ret.fullName && ret.fullName._id) {
+      delete ret.fullName._id;
+    }
+    if (ret.address && ret.address._id) {
+      delete ret.address._id;
+    }
+    return ret;
   },
 });
 
