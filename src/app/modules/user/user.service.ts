@@ -14,4 +14,19 @@ const getUsersFromDB = async () => {
   return result;
 };
 
-export const UserService = { createUserIntoDB, getUsersFromDB };
+const getSingleUserFromDB = async (userId: number) => {
+  const user = await User.isUserExists(userId);
+  if (!user) {
+    const error = new Error('User not found');
+    error.name = 'NotFoundError';
+    throw error;
+  }
+
+  return user;
+};
+
+export const UserService = {
+  createUserIntoDB,
+  getUsersFromDB,
+  getSingleUserFromDB,
+};

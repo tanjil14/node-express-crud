@@ -40,5 +40,34 @@ const getUsers = async (req: Request, res: Response) => {
     });
   }
 };
+const getSingleUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await UserService.getSingleUserFromDB(Number(userId));
 
-export const UserControllers = { createUser, getUsers };
+    res.status(200).json({
+      success: true,
+      message: 'User fetched successfully!',
+      data: result,
+    });
+  } catch (err: any) {
+    if (err.name === 'NotFoundError') {
+      res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: err.message || 'something went wrong',
+        error: err,
+      });
+    }
+  }
+};
+
+export const UserControllers = { createUser, getUsers, getSingleUser };
