@@ -140,16 +140,13 @@ const deleteUser = async (req: Request, res: Response) => {
 const addNewProduct = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-
-    const result = await UserService.AddNewProductToUser(
-      req.body,
-      Number(userId),
-    );
+    const orderData = req.body;
+    await UserService.AddNewProductToUser(orderData, Number(userId));
 
     res.status(200).json({
       success: true,
-      message: 'Student is deleted succesfully',
-      data: result,
+      message: 'Order created successfully!',
+      data: null,
     });
   } catch (err: any) {
     res.status(500).json({
