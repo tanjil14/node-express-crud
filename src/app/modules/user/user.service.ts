@@ -38,9 +38,27 @@ const updateUserIntoDB = async (userData: TUser, id: number) => {
   }
 };
 
+const deleteUserFromDB = async (userId: number) => {
+  const existingUser = await User.isUserExists(userId);
+  if (!existingUser) {
+    const error = new Error('User not found');
+    error.name = 'NotFoundError';
+    throw error;
+  }
+
+  const result = await User.deleteOne({ userId });
+  if (result.deletedCount === 0) {
+    const error = new Error('Failed to delete user');
+    error.name = 'DeletionError';
+    throw error;
+  }
+  return { success: true, message: 'User deleted successfully' };
+};
+
 export const UserService = {
   createUserIntoDB,
   getUsersFromDB,
   getSingleUserFromDB,
   updateUserIntoDB,
+  deleteUserFromDB,
 };
