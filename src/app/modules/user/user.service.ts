@@ -66,9 +66,18 @@ const AddNewProductToUser = async (orderData: TOrderItem, userId: number) => {
   const result = await User.findOneAndUpdate({ userId }, existingUser, {
     new: true,
   });
-
-  console.log(result);
   return result;
+};
+
+const getUserOrders = async (userId: number) => {
+  const existingUser = await User.isUserExists(userId);
+  if (!existingUser) {
+    const error = new Error('User not found');
+    error.name = 'NotFoundError';
+    throw error;
+  }
+
+  return existingUser.orders;
 };
 
 export const UserService = {
@@ -78,4 +87,5 @@ export const UserService = {
   updateUserIntoDB,
   deleteUserFromDB,
   AddNewProductToUser,
+  getUserOrders,
 };

@@ -156,6 +156,26 @@ const addNewProduct = async (req: Request, res: Response) => {
     });
   }
 };
+const getOrders = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await UserService.getUserOrders(Number(userId));
+
+    res.status(200).json({
+      success: true,
+      message: 'Order fetched successfully!',
+      data: {
+        orders: result,
+      },
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'something went wrong',
+      error: err,
+    });
+  }
+};
 
 export const UserControllers = {
   createUser,
