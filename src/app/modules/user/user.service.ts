@@ -125,7 +125,11 @@ const getOrderPrice = async (userId: number) => {
     },
   ]);
 
-  return aggregationResult.length > 0 ? aggregationResult[0] : 0;
+  return aggregationResult.length > 0
+    ? aggregationResult[0]
+    : {
+        totalPrice: 0,
+      };
 };
 export const UserService = {
   createUserIntoDB,
