@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 
 import { UserService } from './user.service';
 import { userValidationSchema } from './user.validation';
+import { updateUserValidationSchema } from '../userUpdate.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
@@ -86,7 +87,7 @@ const getSingleUser = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const zodParsedData = userValidationSchema.parse(req.body);
+    const zodParsedData = updateUserValidationSchema.parse(req.body);
 
     const result = await UserService.updateUserIntoDB(
       zodParsedData,

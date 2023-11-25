@@ -1,4 +1,4 @@
-import { TOrderItem, TUser } from './user.interface';
+import { TOrderItem, TUser, TUserUpdate } from './user.interface';
 import { User } from './user.model';
 
 const createUserIntoDB = async (userData: TUser) => {
@@ -45,10 +45,12 @@ const getSingleUserFromDB = async (userId: number) => {
   return user;
 };
 
-const updateUserIntoDB = async (userData: TUser, id: number) => {
+const updateUserIntoDB = async (userData: TUserUpdate, id: number) => {
   if (await User.isUserExists(id)) {
     const result = await User.findOneAndUpdate({ userId: id }, userData, {
+      $set: userData,
       new: true,
+      runValidators: true,
     });
     return result;
   } else {

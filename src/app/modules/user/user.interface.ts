@@ -29,6 +29,35 @@ export type TUser = {
   orders: TOrderItem[];
 };
 
+export type TUserFullNameUpdate = {
+  firstName?: string;
+  lastName?: string;
+};
+
+export type TUserAddressUpdate = {
+  street?: string;
+  city?: string;
+  country?: string;
+};
+
+export type TOrderItemUpdate = {
+  productName?: string;
+  price?: number;
+  quantity?: number;
+};
+
+export type TUserUpdate = {
+  userId?: number;
+  username?: string;
+  password?: string;
+  fullName?: TUserFullNameUpdate;
+  age?: number;
+  email?: string;
+  isActive?: boolean;
+  hobbies?: string[];
+  address?: TUserAddressUpdate;
+  orders?: TOrderItemUpdate[];
+};
 export interface UserModel extends Model<TUser> {
   isUserExists(userId: number): Promise<TUser | null>;
 }
