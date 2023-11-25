@@ -16,11 +16,22 @@ const createUser = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'something went wrong',
-      error,
-    });
+    if (error.name === 'alreadyExist') {
+      res.status(404).json({
+        success: false,
+        message: 'User already exists!',
+        error: {
+          code: 404,
+          description: 'User already exists!',
+        },
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: error.message || 'something went wrong',
+        error: error,
+      });
+    }
   }
 };
 
